@@ -35,11 +35,15 @@ Using `omz_downloader` command, you can downloaded another AI model.
 omz_downloader --name <model_name> --precision <precision> --output_dir <output_model_path>
 ```
 
-※1 precision example value: `FP16`, `INT8`, `FP16-INT8`
+※1 precision example value: `FP16`, `INT8`, `FP16-INT8` <br>
 ※2 By default, some models are already downloaded
 `human-pose-estimation-0001`, `action-recognition-0001`
 
 ### Run example
+
+The following example does not runnnig now. <br>
+I'm creating it.<br>
+Comming Soon
 
 HumanPoseEstimation
 
