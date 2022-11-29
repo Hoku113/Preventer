@@ -46,21 +46,25 @@ def heatmap_nms(heatmaps, pooled_heatmaps):
 
 # get poses from results
 def process_results(img, compiled_model, pafs, heatmaps):
-
+    # This processing comes from
+    # https://github.com/openvinotoolkit/open_model_zoo/blob/master/demos/common/python/models/open_pose.py
     pooled_heatmaps = np.array(
         [[pool2d(h, kernel_size=3, stride=1, padding=1, pool_mode="max") for h in heatmaps[0]]]
     )
     nms_heatmaps = heatmap_nms(heatmaps, pooled_heatmaps)
 
-    # Decode poses
+    # Decode poses.
     poses, scores = decoder(heatmaps, nms_heatmaps, pafs)
     output_shape = list(compiled_model.output(index=0).partial_shape)
     output_scale = img.shape[1] / output_shape[3].get_length(), img.shape[0] / output_shape[2].get_length()
-
+    # Multiply coordinates by a scaling factor.
     poses[:, :, :2] *= output_scale
     return poses, scores
 
 def draw_poses(img, poses, point_score_threshold, skeleton=default_skeleton):
+
+    print(poses.size)
+
     if poses.size == 0:
         return img
 

@@ -1,5 +1,8 @@
 ### Action Recognition Example from OpenCV
 import cv2
+from openvino.inference_engine import IENetwork, IECore
+
+print(IENetwork)
 
 # base variable
 HEIGHT = 512
