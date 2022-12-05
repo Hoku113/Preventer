@@ -63,7 +63,7 @@ def process_results(img, compiled_model, pafs, heatmaps):
 
 def draw_poses(img, poses, point_score_threshold, skeleton=default_skeleton):
 
-    print(poses.size)
+    # print(poses)
 
     if poses.size == 0:
         return img
@@ -72,6 +72,8 @@ def draw_poses(img, poses, point_score_threshold, skeleton=default_skeleton):
     for pose in poses:
         points = pose[:, :2].astype(np.int32)
         points_scores = pose[:, 2]
+        
+        print(points_scores)
 
         for i, (p, v) in enumerate(zip(points, points_scores)):
             if v > point_score_threshold:
