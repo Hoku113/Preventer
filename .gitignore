@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.python_packages
+
+# azure functions
+/local.settings.json

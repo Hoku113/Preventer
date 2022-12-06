@@ -60,9 +60,8 @@ class VideoPlayer:
         if self._thread is not None:
             self._thread.join()
 
-        self._cap.realease()
+        self._cap.release()
 
-    
     def _run(self):
         prev_time = 0
         while not self._stop:
