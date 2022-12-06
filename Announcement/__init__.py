@@ -9,17 +9,9 @@ from email.mime.multipart import MIMEMultipart
 
 def main(myblob: func.InputStream):
 
-    # Check stream type
-    logging.info(type(myblob))
-    logging.info(myblob)
-
     # Get Host Gmail address and Password
     HOST_ACCOUNT = os.environ["Account"]
     HOST_PASSWORD = os.environ["Password"]
-
-    # check the log
-    logging.info(HOST_ACCOUNT)
-    logging.info(HOST_PASSWORD)
 
     # Get destination Mail address and Subject and text
     SUBJECT = os.environ['Subject']
@@ -46,7 +38,7 @@ def main(myblob: func.InputStream):
     # Create image 
     img = myblob.read()
     img = MIMEImage(img, name=myblob.name)
-    msg.attach()
+    msg.attach(img)
 
     # send mail
     smtpobj.send_message(msg)
