@@ -24,6 +24,9 @@ output_layers = list(compiled_model.outputs)
 
 HEIGHT, WIDTH = list(input_layer.shape)[2:]
 
+print(HEIGHT)
+print(WIDTH)
+
 processing_times = collections.deque() 
 
 # video_player = VideoPlayer("https://github.com/intel-iot-devkit/sample-videos/blob/master/store-aisle-detection.mp4?raw=true", flip=True, fps=30, skip_first_frames=500)
@@ -33,7 +36,7 @@ video_player.start()
 
 processing_times = collections.deque()
 
-
+firstStep = True
 while cv2.waitKey(1) != 27:
 
     frame = video_player.next()
@@ -43,8 +46,13 @@ while cv2.waitKey(1) != 27:
         break
 
     if(threading.activeCount() == 2):
-        th = FrameProcess(frame, compiled_model, pafs_output_key, heatmaps_output_key, processing_times, HEIGHT, WIDTH)
-        frame = th.run()
+        if firstStep:
+            th = FrameProcess(frame, compiled_model, pafs_output_key, heatmaps_output_key, processing_times, HEIGHT, WIDTH)
+            frame, before_points = th.run()
+            firstStep = False
+        else:
+            th = FrameProcess(frame, compiled_model, pafs_output_key, heatmaps_output_key, processing_times, HEIGHT, WIDTH, before_points)
+            frame, before_points = th.run()
 
 # デバッグ用
 #--------------------------------------------------------
@@ -87,6 +95,7 @@ while cv2.waitKey(1) != 27:
 # --------------------------------------------------------
 
     cv2.imshow('streaming', frame)
+
 
 video_player.stop()
 cv2.destroyAllWindows()

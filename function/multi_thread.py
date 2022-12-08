@@ -5,7 +5,7 @@ from function.process_function import *
 
 class FrameProcess(threading.Thread):
 
-    def __init__(self, frame, compiled_model, pafs_output_key, heatmaps_output_key, processing_times, height, width):
+    def __init__(self, frame, compiled_model, pafs_output_key, heatmaps_output_key, processing_times, height, width, before_points=[]):
         super(FrameProcess, self).__init__()
         self._frame = frame
         self._compiled_model = compiled_model
@@ -14,6 +14,7 @@ class FrameProcess(threading.Thread):
         self._processing_times = processing_times
         self._height = height
         self._width = width
+        self._before_points = before_points
 
     def run(self):
 
@@ -36,8 +37,9 @@ class FrameProcess(threading.Thread):
         heatmaps = results[self._heatmaps_output_key]
 
         poses, scores = process_results(self._frame, self._compiled_model, pafs, heatmaps)
-
-        frame = draw_poses(self._frame, poses, 0.1)
+        
+        frame, before_points = draw_poses(self._frame, poses, 0.1, self._before_points)
+        
 
         self._processing_times.append(stop_time - start_time)
         if len(self._processing_times) > 200:
@@ -49,7 +51,7 @@ class FrameProcess(threading.Thread):
 
         cv2.putText(frame, f"Inference time: {processing_time:.1f}ms ({fps:.1f} FPS)", (20, 40),cv2.FONT_HERSHEY_COMPLEX, f_width / 1000, (0, 0, 255), 1, cv2.LINE_AA)
 
-        return frame
+        return frame, before_points
 
             
 

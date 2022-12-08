@@ -3,6 +3,7 @@ import cv2
 from numpy.lib.stride_tricks import as_strided
 from function.decoder import OpenPoseDecoder
 from function.config import colors, default_skeleton
+import time
 
 decoder = OpenPoseDecoder()
 
@@ -61,9 +62,9 @@ def process_results(img, compiled_model, pafs, heatmaps):
     poses[:, :, :2] *= output_scale
     return poses, scores
 
-def draw_poses(img, poses, point_score_threshold, skeleton=default_skeleton):
+def draw_poses(img, poses, point_score_threshold, before_points, skeleton=default_skeleton):
 
-    # print(poses)
+    print(before_points)
 
     if poses.size == 0:
         return img
@@ -73,7 +74,15 @@ def draw_poses(img, poses, point_score_threshold, skeleton=default_skeleton):
         points = pose[:, :2].astype(np.int32)
         points_scores = pose[:, 2]
         
-        print(points_scores)
+        print(f"new_points: {points}")
+
+        # print(f"subject points: {points - before_points}")
+
+        # if before_points == None:
+        #     pass
+        # else:
+        #     print(f"subject points: {points - before_points}")
+        
 
         for i, (p, v) in enumerate(zip(points, points_scores)):
             if v > point_score_threshold:
@@ -84,4 +93,5 @@ def draw_poses(img, poses, point_score_threshold, skeleton=default_skeleton):
                 cv2.line(img_limbs, tuple(points[i]), tuple(points[j]), color=colors[j], thickness=4)
 
     cv2.addWeighted(img, 0.4, img_limbs, 0.6, 0, dst=img)
-    return img
+    before_points = points
+    return img, before_points
