@@ -41,9 +41,8 @@ omz_downloader --name <model_name> --precision <precision> --output_dir <output_
 
 ### Run example
 
-The following example does not runnnig now. <br>
-I'm creating it.<br>
-Comming Soon
+---- 12/22 update ----<br>
+I created a Human Pose Estimation demo. <br> try it now!
 
 HumanPoseEstimation
 
