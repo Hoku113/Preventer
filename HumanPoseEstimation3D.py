@@ -60,17 +60,20 @@ while cv2.waitKey(1) != 27:
     if frame is None:
         break
 
-    input_scale = 450 / frame.shape[0]
+    print(frame.shape)
+
+    input_scale = 450 / frame.shape[1]
     scaled_img = cv2.resize(frame, dsize=(model.inputs[0].shape[3], model.inputs[0].shape[2]))
     img = scaled_img[
         0: scaled_img.shape[0] - (scaled_img.shape[0] % stride),
         0: scaled_img.shape[1] - (scaled_img.shape[1] % stride),
     ]
 
+
     img = np.transpose(img, (2, 0, 1))[None]
 
     if fx < 0:
-        fx = np.float32(0.8 * frame.shape[1])
+        fx = np.float32(0.8 * frame.shape[0])
 
     infer_request.infer({input_tensor_name: img})
     results = {
@@ -81,6 +84,9 @@ while cv2.waitKey(1) != 27:
     results = (results["features"][0], results["heatmaps"][0], results["pafs"][0])
 
     poses_3d, poses_2d = parse_poses(results, input_scale, stride, fx)
+
+    print(poses_2d)
+
     edges = []
 
     if len(poses_3d):
@@ -90,7 +96,7 @@ while cv2.waitKey(1) != 27:
         y = poses_3d_copy[:, 1::4]
         z = poses_3d_copy[:, 2::4]
 
-        poses_3d[:, 0::4], poses_3d[:, 1::4], poses_3d[:, 2::4] = -z, x, y
+        poses_3d[:, 0::4], poses_3d[:, 1::4], poses_3d[:, 2::4] = -z, x, -y
         poses_3d = poses_3d.reshape(poses_3d.shape[0], 19, -1)[:, :, 0:3]
         edges = (Plotter3d.SKELETON_EDGES + 19 * np.arange(poses_3d.shape[0]).reshape((-1, 1, 1))).reshape(-1, 2)
     plotter.plot(canvas_3d, poses_3d, edges)

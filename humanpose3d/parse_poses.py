@@ -22,11 +22,6 @@ limbs = [[18, 17, 1],
 
 def get_root_relative_poses(inference_results):
     features, heatmap, paf_map = inference_results
-
-    print(features.shape)
-    print(heatmap.shape)
-    print(paf_map.shape)
-
     upsample_ratio = 4
     found_poses = extract_poses(heatmap[0:-1], paf_map, upsample_ratio)[0]
     # scale coordinates to features space

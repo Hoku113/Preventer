@@ -14,20 +14,15 @@ class Plotter3d:
                                [12, 13], [13, 14], [0, 1], [1, 15], [15, 16], [1, 17], [17, 18]])
 
     def __init__(self, canvas_size, origin=(0.5, 0.5), scale=1):
-        self.origin = np.array(
-            [origin[1] * canvas_size[1], origin[0] * canvas_size[0]], dtype=np.float32)
-
+        self.origin = np.array([origin[1] * canvas_size[1], origin[0] * canvas_size[0]], dtype=np.float32)
         self.scale = np.float32(scale)
         self.theta = 0
         self.phi = 0
         axis_length = 200
         axes = [
-            np.array([[-axis_length/2, -axis_length/2, 0],
-                     [axis_length/2, -axis_length/2, 0]], dtype=np.float32),
-            np.array([[-axis_length/2, -axis_length/2, 0],
-                     [-axis_length/2, axis_length/2, 0]], dtype=np.float32),
-            np.array([[-axis_length/2, -axis_length/2, 0], [-axis_length /
-                     2, -axis_length/2, axis_length]], dtype=np.float32)
+            np.array([[-axis_length/2, -axis_length/2, 0],[axis_length/2, -axis_length/2, 0]], dtype=np.float32),
+            np.array([[-axis_length/2, -axis_length/2, 0],[-axis_length/2, axis_length/2, 0]], dtype=np.float32),
+            np.array([[-axis_length/2, -axis_length/2, 0], [-axis_length/2, -axis_length/2, axis_length]], dtype=np.float32)
         ]
 
         step = 20
@@ -102,11 +97,10 @@ def draw_poses(img, poses_2d):
         was_found = pose[2, :] > 0
         for edge in body_edges:
             if was_found[edge[0]] and was_found[edge[1]]:
-                cv2.line(img, tuple(pose[0:2, edge[0]].astype(int)), tuple(pose[0:2, edge[1]].astype(int)), (255, 255, 0), 4, cv2.LINE_AA)
-
+                cv2.line(img, tuple(pose[0:2, edge[0]].astype(int)), tuple(pose[0:2, edge[1]].astype(int)),
+                         (255, 255, 0), 4, cv2.LINE_AA)
         for kpt_id in range(pose.shape[1]):
             if pose[2, kpt_id] != -1:
                 cv2.circle(img, tuple(pose[0:2, kpt_id].astype(int)), 3, (0, 255, 255), -1, cv2.LINE_AA)
-
 
         
