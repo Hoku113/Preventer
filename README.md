@@ -41,17 +41,11 @@ omz_downloader --name <model_name> --precision <precision> --output_dir <output_
 
 ### Run example
 
----- 12/22 update ----<br>
-I created a Human Pose Estimation demo. <br> try it now!
+---- 01/21 update ----<br>
+We are changed HumanPoseEstimation to HumanPoseEstimation 3D
 
-HumanPoseEstimation
-
-```python
-python HumanPoseEstimation.py
-```
-
-ActionRecognition.py
+HumanPoseEstimation　3D
 
 ```python
-python ActionRecognition.py
+python HumanPoseEstimation3D.py
 ```
