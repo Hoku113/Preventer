@@ -3,6 +3,7 @@ import cv2
 from numpy.lib.stride_tricks import as_strided
 from function.decoder import OpenPoseDecoder
 from function.config import colors, default_skeleton
+import time
 
 decoder = OpenPoseDecoder()
 
@@ -61,9 +62,8 @@ def process_results(img, compiled_model, pafs, heatmaps):
     poses[:, :, :2] *= output_scale
     return poses, scores
 
-def draw_poses(img, poses, point_score_threshold, skeleton=default_skeleton):
-
-    # print(poses)
+def draw_poses(img, poses, point_score_threshold, before_points, skeleton=default_skeleton):
+    # print(f"before_points:{before_points}")
 
     if poses.size == 0:
         return img
@@ -72,8 +72,14 @@ def draw_poses(img, poses, point_score_threshold, skeleton=default_skeleton):
     for pose in poses:
         points = pose[:, :2].astype(np.int32)
         points_scores = pose[:, 2]
-        
-        print(points_scores)
+
+        if before_points == []:
+            pass
+        elif before_points[before_points < 640].min() == 0:
+            print("passed")
+            pass
+        else:
+            print(f"subject points: {np.abs(points - before_points)}")
 
         for i, (p, v) in enumerate(zip(points, points_scores)):
             if v > point_score_threshold:
@@ -84,4 +90,28 @@ def draw_poses(img, poses, point_score_threshold, skeleton=default_skeleton):
                 cv2.line(img_limbs, tuple(points[i]), tuple(points[j]), color=colors[j], thickness=4)
 
     cv2.addWeighted(img, 0.4, img_limbs, 0.6, 0, dst=img)
-    return img
+    before_points = points
+    return img, before_points
+
+def model_infer(scaled_img, stride, infer_request, input_tensor_name):
+
+    img = scaled_img[
+        0 : scaled_img.shape[0] - (scaled_img.shape[0] % stride),
+        0 : scaled_img.shape[1] - (scaled_img.shape[1] % stride),
+    ]
+
+    img = np.transpose(img, (2, 0, 1))[
+        None,
+    ]
+
+    infer_request.infer({input_tensor_name: img})
+
+    results = {
+        name: infer_request.get_tensor(name).data[:]
+        for name in {"features", "heatmaps", "pafs"}
+    }
+
+    results = (results["features"][0], results["heatmaps"][0], results["pafs"][0])
+
+    return results
+

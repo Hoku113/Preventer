@@ -131,3 +131,5 @@ dmypy.json
 
 # azure functions
 /local.settings.json
+
+test/
