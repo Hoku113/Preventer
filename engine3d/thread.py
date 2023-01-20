@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
-from humanpose3d.draw import Plotter3d, draw_poses
-from humanpose3d.process import rotate_poses
-from humanpose3d.parse_poses import parse_poses
+from engine3d.draw import Plotter3d, draw_poses
+from engine3d.process import rotate_poses
+from engine3d.parse_poses import parse_poses
 
 
 class MultiThread:

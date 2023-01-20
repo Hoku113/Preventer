@@ -1,11 +1,11 @@
 import numpy as np
 
-from humanpose3d.pose import Pose, propagate_ids
+from engine3d.pose import Pose, propagate_ids
 try:
     from pose_extractor import extract_poses
 except:
     print('#### Cannot load fast pose extraction, switched to legacy slow implementation. ####')
-    from humanpose3d.legacy_pose_extractor import extract_poses
+    from engine3d.legacy_pose_extractor import extract_poses
 
 AVG_PERSON_HEIGHT = 180
 

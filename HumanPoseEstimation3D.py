@@ -4,9 +4,9 @@ import threading
 import json
 from openvino.runtime import Core
 from function.process_function import *
-from humanpose3d.draw import Plotter3d
+from engine3d.draw import Plotter3d
 from function.utils import VideoPlayer
-from humanpose3d.thread import MultiThread
+from engine3d.thread import MultiThread
 
 focal_length = -1  # default
 stride = 8

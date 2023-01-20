@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from humanpose3d.one_euro_filter import OneEuroFilter
+from engine3d.one_euro_filter import OneEuroFilter
 
 
 class Pose:
