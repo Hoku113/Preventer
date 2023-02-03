@@ -106,7 +106,7 @@ def draw_poses(frame, poses_2d, scaled_img):
         pose = np.array(pose[0:-1]).reshape((-1, 3)).transpose()
         was_found = pose[2] > 0
 
-        print(pose[0])
+        # print(pose[0])
         # print(pose[1])
 
         pose[0], pose[1] = (
@@ -143,20 +143,18 @@ def draw_dangerous_person(frame, poses_2d, scaled_img):
             pose[1] * frame.shape[0] / scaled_img.shape[0]
         )
 
-        # max_pose_x = int(pose[0].max())
-        # max_pose_y = int(pose[1].max())
-        # max_pose_y = int(pose[0].max())
-        # max_pose_y = int(pose[1].max())
+        max_pose_x = int(pose[0][pose[0] > -1.4].max())
+        max_pose_y = int(pose[1][pose[1] > -1.4].max())
+        min_pose_x = int(pose[0][pose[0] > -1.4].min())
+        min_pose_y = int(pose[1][pose[1] > -1.4].min())
 
+        print("danger action")
 
-        # print(max_pose_x)
-        # # print(max_pose_y)
-
-        # cv2.rectangle(
-        #     frame,
-        #     tuple(max_pose_x, max_pose_y),
-        #     3, 
-        #     (255, 0, 0),
-        #     -1,
-        #     cv2.LINE_AA
-        # )
+        cv2.rectangle(
+            frame,
+            (min_pose_x - 30, min_pose_y - 30),
+            (max_pose_x + 30, max_pose_y + 30),
+            (0, 0, 255),
+            3, 
+            cv2.LINE_4
+        )
