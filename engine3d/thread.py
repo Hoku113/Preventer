@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
-from engine3d.draw import Plotter3d, draw_poses
-from engine3d.process import rotate_poses
+from engine3d.draw import Plotter3d, draw_poses, draw_dangerous_person
+from engine3d.process import rotate_poses, submit_joint
 from engine3d.parse_poses import parse_poses
-
+from function.debug_function import debug_function
 
 class MultiThread:
 
@@ -24,7 +24,7 @@ class MultiThread:
         self._mean_time = mean_time
 
 
-    def run(self):
+    def run(self, before_3d_frame=None):
 
         scaled_img = cv2.resize(self._frame, dsize=(self._model.inputs[0].shape[3], self._model.inputs[0].shape[2]))
 
@@ -62,17 +62,25 @@ class MultiThread:
                 -y
             )
 
-            # poses_3d[:, 0::4], poses_3d[:, 1::4], poses_3d[:, 2::4] = (
-            #     -z + np.ones(poses_3d[:, 2::4].shape) * 200,
-            #     -y + np.ones(poses_3d[:, 1::4].shape) * 100,
-            #     -x
-            # )
             poses_3d = poses_3d.reshape(poses_3d.shape[0], 19, -1)[:, :, 0:3]
+
+            submit_total = submit_joint(poses_3d, before_3d_frame)
+
+            # debug_function(submit_total)
+
+            if submit_total == None:
+                pass
+            elif submit_total >= 100:
+                draw_dangerous_person(self._frame, poses_2d, scaled_img)                        
+
             edges = (Plotter3d.SKELETON_EDGES + 19 *
                      np.arange(poses_3d.shape[0]).reshape((-1, 1, 1))).reshape(-1, 2)
 
         self._plotter.plot(self._canvas_3d, poses_3d, edges)
         # cv2.imshow(self._canvas3d_window_name, self._canvas_3d)
+
+        # if submit_total >= 100:
+        #     draw_poses(self._frame, poses_2d, scaled_img)
 
         draw_poses(self._frame, poses_2d, scaled_img)
         current_time = (cv2.getTickCount() - self._current_time) / cv2.getTickFrequency()
@@ -84,4 +92,4 @@ class MultiThread:
 
         cv2.putText(self._frame, f"FPS: {int(1 / self._mean_time * 10) / 10}", (10, 30), cv2.FONT_HERSHEY_COMPLEX, 0.7, (0, 0, 255))
         
-        return self._frame
+        return self._frame, poses_3d

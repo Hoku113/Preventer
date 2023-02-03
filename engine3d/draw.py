@@ -2,6 +2,7 @@ import math
 import cv2
 import numpy as np
 
+
 previous_position = []
 theta, phi = 3.1415/4, -3.1415/6
 should_rotate = False
@@ -105,17 +106,13 @@ def draw_poses(frame, poses_2d, scaled_img):
         pose = np.array(pose[0:-1]).reshape((-1, 3)).transpose()
         was_found = pose[2] > 0
 
-        # print(pose[0])
+        print(pose[0])
         # print(pose[1])
 
         pose[0], pose[1] = (
             pose[0] * frame.shape[1] / scaled_img.shape[1], # 正確にジョイントをプロットするために座標の位置を調整する
             pose[1] * frame.shape[0] / scaled_img.shape[0]
         )
-
-        print(pose[0])
-        print(pose[1])
-
 
         for edge in body_edges:
             if was_found[edge[0]] and was_found[edge[1]]:
@@ -135,3 +132,31 @@ def draw_poses(frame, poses_2d, scaled_img):
                     -1, 
                     cv2.LINE_AA,
                 )
+
+def draw_dangerous_person(frame, poses_2d, scaled_img):
+    for pose in poses_2d:
+        pose = np.array(pose[0: -1]).reshape((-1, 3)).transpose()
+        was_found = pose[2] > 0
+
+        pose[0], pose[1] = (
+            pose[0] * frame.shape[1] / scaled_img.shape[1],
+            pose[1] * frame.shape[0] / scaled_img.shape[0]
+        )
+
+        # max_pose_x = int(pose[0].max())
+        # max_pose_y = int(pose[1].max())
+        # max_pose_y = int(pose[0].max())
+        # max_pose_y = int(pose[1].max())
+
+
+        # print(max_pose_x)
+        # # print(max_pose_y)
+
+        # cv2.rectangle(
+        #     frame,
+        #     tuple(max_pose_x, max_pose_y),
+        #     3, 
+        #     (255, 0, 0),
+        #     -1,
+        #     cv2.LINE_AA
+        # )
