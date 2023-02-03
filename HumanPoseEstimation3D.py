@@ -16,6 +16,8 @@ processing_times = []
 mean_time = 0
 fx = -1
 
+first_time = True
+
 MODEL_PATH = "./model/intel/human-pose-estimation-3d-0001/FP32/human-pose-estimation-3d-0001.xml"
 MODEL_WEIGHTS_PATH = "./model/intel/human-pose-estimation-3d-0001/FP32/human-pose-estimation-3d-0001.bin"
 FILE_PATH = "./data/extrinsics.json"
@@ -56,8 +58,14 @@ while cv2.waitKey(1) != 27:
 
     if threading.active_count() == 2:
         th = MultiThread(frame, model, stride, fx, R, t, infer_request,
-                         input_tensor_name,  plotter, canvas_3d, canvas_3d_window_name, current_time, mean_time)
-        frame = th.run()
+                input_tensor_name,  plotter, canvas_3d, canvas_3d_window_name, current_time, mean_time)
+
+        if first_time:
+            frame, before_3d_frame = th.run()
+            first_time = False
+        else:
+            frame, before_3d_frame = th.run(before_3d_frame)
+        
 
     # 3d Human pose
     cv2.imshow(canvas_3d_window_name, canvas_3d)
