@@ -136,8 +136,7 @@ def draw_poses(frame, poses_2d, scaled_img):
 def draw_dangerous_person(frame, poses_2d, scaled_img):
     for pose in poses_2d:
         pose = np.array(pose[0: -1]).reshape((-1, 3)).transpose()
-        was_found = pose[2] > 0
-
+        
         pose[0], pose[1] = (
             pose[0] * frame.shape[1] / scaled_img.shape[1],
             pose[1] * frame.shape[0] / scaled_img.shape[0]

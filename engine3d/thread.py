@@ -4,6 +4,7 @@ from engine3d.draw import Plotter3d, draw_poses, draw_dangerous_person
 from engine3d.process import rotate_poses, submit_joint
 from engine3d.parse_poses import parse_poses
 from function.debug_function import debug_function
+from function.Blob_func import send_blob
 
 class MultiThread:
 
@@ -71,7 +72,8 @@ class MultiThread:
             if submit_total == None:
                 pass
             elif submit_total >= 100:
-                draw_dangerous_person(self._frame, poses_2d, scaled_img)                        
+                draw_dangerous_person(self._frame, poses_2d, scaled_img)
+                send_blob(self._frame)
 
             edges = (Plotter3d.SKELETON_EDGES + 19 *
                      np.arange(poses_3d.shape[0]).reshape((-1, 1, 1))).reshape(-1, 2)
