@@ -2,11 +2,13 @@
 import cv2
 import threading
 import json
+import pafy
 from openvino.runtime import Core
 from function.process_function import *
 from engine3d.draw import Plotter3d
 from function.utils import VideoPlayer
 from engine3d.thread import MultiThread
+
 
 focal_length = -1  # default
 stride = 8
@@ -46,7 +48,17 @@ with open(FILE_PATH, "r") as f:
 R = np.array(extrinsics['R'], dtype=np.float32)
 t = np.array(extrinsics['t'], dtype=np.float32)
 
-video_player = VideoPlayer(0, flip=True, fps=30, skip_first_frames=0)
+
+# web camera
+# video_player = VideoPlayer(0, flip=True, fps=30, skip_first_frames=0)
+
+# youtube video
+url = "youtube video url" 
+
+video = pafy.new(url)
+best = video.getbest(preftype="mp4")
+video_player = VideoPlayer(best.url, flip=False, fps=30, skip_first_frames=7240)
+
 video_player.start()
 
 while cv2.waitKey(1) != 27:

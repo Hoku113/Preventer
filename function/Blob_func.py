@@ -19,8 +19,6 @@ def send_blob(frame):
     image_frame.save(img_byte_arr, format="png")
     png_buffer = img_byte_arr.getvalue()
 
-    print(type(png_buffer))
-
     # send to blob
     blob_client = service_client.get_blob_client(container=container, blob=file_name)
     blob_client.upload_blob(png_buffer, overwrite=True)

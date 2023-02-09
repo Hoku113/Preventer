@@ -67,11 +67,11 @@ class MultiThread:
 
             submit_total = submit_joint(poses_3d, before_3d_frame)
 
-            # debug_function(submit_total)
+            debug_function(submit_total)
 
             if submit_total == None:
                 pass
-            elif submit_total >= 100:
+            elif submit_total >= 300:
                 draw_dangerous_person(self._frame, poses_2d, scaled_img)
                 send_blob(self._frame)
 

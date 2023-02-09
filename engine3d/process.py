@@ -17,7 +17,7 @@ def submit_joint(poses_3d, before_poses_3d):
         np.set_printoptions(precision=1, suppress=True)
         submit_total = int(submit)
 
-        if submit_total >= 5000:
+        if submit_total >= 600:
             pass
         else:
             return submit_total
