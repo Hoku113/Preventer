@@ -2,7 +2,7 @@ import cv2
 import pafy
 
 # キャプチャするYouTube動画のURLを設定します
-url = "https://www.youtube.com/watch?v=ASRmcWj4gd4"
+url = ""
 
 video = pafy.new(url)
 best = video.getbest(preftype="mp4")
