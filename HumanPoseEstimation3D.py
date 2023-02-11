@@ -57,7 +57,7 @@ url = "youtube video url"
 
 video = pafy.new(url)
 best = video.getbest(preftype="mp4")
-video_player = VideoPlayer(best.url, flip=False, fps=30, skip_first_frames=7240)
+video_player = VideoPlayer(best.url, flip=False, fps=30, skip_first_frames=7250)
 
 video_player.start()
 
@@ -66,7 +66,9 @@ while cv2.waitKey(1) != 27:
     frame = video_player.next()
 
     if frame is None:
-        break
+        video_player.start()
+        print("continue")
+        continue
 
     if threading.active_count() == 2:
         th = MultiThread(frame, model, stride, fx, R, t, infer_request,

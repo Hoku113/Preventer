@@ -73,7 +73,7 @@ class MultiThread:
                 pass
             elif submit_total >= 300:
                 draw_dangerous_person(self._frame, poses_2d, scaled_img)
-                send_blob(self._frame)
+                # send_blob(self._frame)
 
             edges = (Plotter3d.SKELETON_EDGES + 19 *
                      np.arange(poses_3d.shape[0]).reshape((-1, 1, 1))).reshape(-1, 2)
