@@ -65,25 +65,18 @@ class MultiThread:
 
             poses_3d = poses_3d.reshape(poses_3d.shape[0], 19, -1)[:, :, 0:3]
 
-            submit_total = submit_joint(poses_3d, before_3d_frame)
+            danger_person_index = submit_joint(poses_3d, before_3d_frame)
 
-            debug_function(submit_total)
-
-            if submit_total == None:
+            if danger_person_index == None or danger_person_index == []:
                 pass
-            elif submit_total >= 300:
-                draw_dangerous_person(self._frame, poses_2d, scaled_img)
+            elif danger_person_index:
+                draw_dangerous_person(self._frame, poses_2d, scaled_img, danger_person_index)
                 # send_blob(self._frame)
 
             edges = (Plotter3d.SKELETON_EDGES + 19 *
                      np.arange(poses_3d.shape[0]).reshape((-1, 1, 1))).reshape(-1, 2)
 
         self._plotter.plot(self._canvas_3d, poses_3d, edges)
-        # cv2.imshow(self._canvas3d_window_name, self._canvas_3d)
-
-        # if submit_total >= 100:
-        #     draw_poses(self._frame, poses_2d, scaled_img)
-
         draw_poses(self._frame, poses_2d, scaled_img)
         current_time = (cv2.getTickCount() - self._current_time) / cv2.getTickFrequency()
 

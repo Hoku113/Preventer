@@ -11,15 +11,26 @@ def rotate_poses(poses_3d, R, t):
 
 
 def submit_joint(poses_3d, before_poses_3d):
-    try:
-        submit = np.abs(before_poses_3d - poses_3d)
-        submit = np.sum(submit)
-        np.set_printoptions(precision=1, suppress=True)
-        submit_total = int(submit)
 
-        if submit_total >= 600:
-            pass
-        else:
-            return submit_total
+    index = 0
+    danger_person_index = []
+    try:
+        for x in range(len(poses_3d)):
+
+            if len(poses_3d) != len(before_poses_3d):
+                pass
+
+            submit = np.abs(before_poses_3d[x] - poses_3d[x])
+            submit = np.sum(submit)
+            np.set_printoptions(precision=1, suppress=True)
+            submit_total = int(submit)
+
+            if submit_total >= 5000:
+                pass
+            elif submit_total >= 300:
+                danger_person_index.append(index)
+                index += 1
+
+        return danger_person_index
     except:
         pass
