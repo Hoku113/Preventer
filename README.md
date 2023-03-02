@@ -14,7 +14,7 @@ If you are getting started demo, Please run this command.
 
 Create Python virtual environment
 
-```python
+```cmd
 python -m venv .venv
 
 .\venv\Scripts\activate
@@ -24,7 +24,7 @@ python -m venv .venv
 
 The module have already written "requirements.txt"
 
-```python
+```cmd
 python -m pip install -r requirements.txt
 ```
 
@@ -52,6 +52,6 @@ video_player.start()
 
 and run it
 
-```python
+```cmd
 python HumanPoseEstimation3D.py
 ```
