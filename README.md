@@ -8,12 +8,13 @@ If you are getting started demo, Please run this command.
 
 - windows 10/ 11 Home, Pro
 - python 3.9
+- Any Core series (10th gen later)
 
 ### Setup
 
 Create Python virtual environment
 
-```python
+```cmd
 python -m venv .venv
 
 .\venv\Scripts\activate
@@ -23,29 +24,34 @@ python -m venv .venv
 
 The module have already written "requirements.txt"
 
-```python
+```cmd
 python -m pip install -r requirements.txt
 ```
 
-### Install model
-
-Using `omz_downloader` command, you can downloaded another AI model.
-
-```cmd
-omz_downloader --name <model_name> --precision <precision> --output_dir <output_model_path>
-```
-
-※1 precision example value: `FP16`, `INT8`, `FP16-INT8` <br>
-※2 By default, some models are already downloaded
-`human-pose-estimation-0001`, `action-recognition-0001`
-
 ### Run example
 
----- 01/21 update ----<br>
-We are changed HumanPoseEstimation to HumanPoseEstimation 3D
+HumanPoseEstimation 3D(web cam)
 
-HumanPoseEstimation　3D
+```cmd
+python HumanPoseEstimation3D.py
+```
+
+HumanPoseEstimation 3D(video url)
+
+comment out `./HumanPoseEstimation3D.py` in `line56` to `line60`
 
 ```python
+url = "video url" 
+
+video = pafy.new(url, ydl_opts={'nocheckcertificate': True})
+best = video.getbest(preftype="mp4")
+video_player = VideoPlayer(best.url, flip=False, fps=30, skip_first_frames=0)
+
+video_player.start()
+```
+
+and run it
+
+```cmd
 python HumanPoseEstimation3D.py
 ```
