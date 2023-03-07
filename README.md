@@ -38,20 +38,6 @@ python HumanPoseEstimation3D.py
 
 HumanPoseEstimation 3D(video url)
 
-comment out `./HumanPoseEstimation3D.py` in `line56` to `line60`
-
-```python
-url = "video url" 
-
-video = pafy.new(url, ydl_opts={'nocheckcertificate': True})
-best = video.getbest(preftype="mp4")
-video_player = VideoPlayer(best.url, flip=False, fps=30, skip_first_frames=0)
-
-video_player.start()
-```
-
-and run it
-
 ```cmd
-python HumanPoseEstimation3D.py
+python HumanPoseEstimation.py --source [video path] or [video url] --skip_first_frames [any value]
 ```
