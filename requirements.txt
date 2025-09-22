@@ -7,4 +7,4 @@ ipython
 
 # 任意(いろいろな動画でテストできるようにするために使用)
 pafy
-youtube_dl
+yt-dlp
