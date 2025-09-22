@@ -1,17 +1,17 @@
 # Preventer
-
 Preventing station platform from falling
 
-If you are getting started demo, Please run this command.
+## Version
+Current Version: **0.1.0-beta**
 
-### Environment
+Released: **2025-09-22**
 
-- windows 10/ 11 Home, Pro
-- python 3.9
-- Any Core series (10th gen later)
+## Environment
+- windows 10/11 Home/Pro
+- python 3.9+
+- Intel Core series (7th later)
 
-### Setup
-
+## Setup
 Create Python virtual environment
 
 ```cmd
@@ -20,16 +20,14 @@ python -m venv .venv
 .\venv\Scripts\activate
 ```
 
-### Install Module
-
+## Install Module
 The module have already written "requirements.txt"
 
 ```cmd
 python -m pip install -r requirements.txt
 ```
 
-### Run example
-
+## Run example
 HumanPoseEstimation 3D(web cam)
 
 ```cmd
