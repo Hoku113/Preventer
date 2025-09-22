@@ -2,9 +2,9 @@
 import cv2
 import threading
 import json
-import pafy
+import yt_dlp
 import argparse
-from openvino.runtime import Core
+import openvino as ov
 from function.process_function import *
 from engine3d.draw import Plotter3d
 from function.utils import VideoPlayer
@@ -24,7 +24,7 @@ MODEL_PATH = "./model/intel/human-pose-estimation-3d-0001/FP32/human-pose-estima
 MODEL_WEIGHTS_PATH = "./model/intel/human-pose-estimation-3d-0001/FP32/human-pose-estimation-3d-0001.bin"
 FILE_PATH = "./data/extrinsics.json"
 
-ie_core = Core()
+ie_core = ov.Core()
 
 model = ie_core.read_model(model=MODEL_PATH, weights=MODEL_WEIGHTS_PATH)
 
@@ -53,9 +53,9 @@ def main(source, size, flip, fps, skip_first_frames):
     first_time = True
 
     if source.startswith("https"):
-        video=pafy.new(source)
-        best = video.getbest(preftype="mp4")
-        source = best.url
+        with yt_dlp.YoutubeDL({"format": "bestvideo[ext=mp4][vcodec*=avc1]/best[ext=mp4]/best"}) as ydl:
+            info_dict = ydl.extract_info(source, download=False)
+            source = info_dict.get("url", None)
     elif source == "0":
         source = int(source)
 
@@ -71,7 +71,7 @@ def main(source, size, flip, fps, skip_first_frames):
         if frame is None:
             break
 
-        if threading.active_count() == 2:
+        if threading.active_count() == 3:
             th = MultiThread(frame, model, stride, fx, R, t, infer_request,
                     input_tensor_name,  plotter, canvas_3d, canvas_3d_window_name, current_time, mean_time)
 
@@ -94,7 +94,7 @@ def main(source, size, flip, fps, skip_first_frames):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--source', type=str, default="0", help="string. default: your webcam \n video path: local video \n video URL: youtube video")
-    parser.add_argument('--size', type=int, default=None, help="Image size")
+    parser.add_argument('--size', type=int, default=(720, 720) , help="Image size")
     parser.add_argument('--flip', type=bool, default=False, help="bool. Flipped images")
     parser.add_argument('--fps', type=int, default=30, help="int. Change frame rate")
     parser.add_argument('--skip_first_frames', type=int, default=0, help="int. Skip frames when load video or video URL")
