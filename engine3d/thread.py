@@ -1,12 +1,14 @@
 import cv2
 import numpy as np
-from engine3d.draw import draw_poses, draw_dangerous_person
-from engine3d.process import rotate_poses, submit_joint
+
+from engine3d.draw import draw_dangerous_person, draw_poses
 from engine3d.parse_poses import parse_poses
+from engine3d.process import rotate_poses, submit_joint
+
 # from function.Blob_func import send_blob # 検知対象者保存用のために使用
 
 # 定数定義
-STRIDE = 8 
+STRIDE = 8
 SKELETON_EDGES = np.array(
     [
         [0, 1],
@@ -84,5 +86,11 @@ class MultiThread:
             self._mean_time = current_time
         else:
             self._mean_time = self._mean_time * 0.95 + current_time * 0.05
-        cv2.putText(self._frame, f"FPS: {int(1 / self._mean_time * 10) / 10}", (10, 30), cv2.FONT_HERSHEY_COMPLEX, 0.7, (0, 0, 255))
+        cv2.putText(self._frame,
+                    f"FPS: {int(1 / self._mean_time * 10) / 10}",
+                    (10, 30),
+                    cv2.FONT_HERSHEY_COMPLEX,
+                    0.7,
+                    (0, 0, 255)
+                )
         return self._frame, poses_3d

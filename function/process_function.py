@@ -1,6 +1,7 @@
-import numpy as np
 import cv2
+import numpy as np
 from numpy.lib.stride_tricks import as_strided
+
 from function.decoder import OpenPoseDecoder
 
 # 定数定義
@@ -21,7 +22,7 @@ def pool2d(A, kernel_size, stride, padding, pool_mode="max"):
         pool_mode: string, 'max' or 'avg'
     """
 
-    # padding 
+    # padding
     A = np.pad(A, padding, mode="constant")
     output_shape = (
         (A.shape[0] - kernel_size) // stride + 1,

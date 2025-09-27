@@ -1,4 +1,5 @@
 import math
+
 import cv2
 import numpy as np
 
@@ -13,7 +14,7 @@ BODY_EDGES = np.array(
      [0, 9], [9, 10], [10, 11],  # neck - r_shoulder - r_elbow - r_wrist
      [0, 6], [6, 7], [7, 8],        # neck - l_hip - l_knee - l_ankle
      [0, 12], [12, 13], [13, 14]]   # neck - r_hip - r_knee - r_ankle
-     )  
+     )
 AXIS_LENGTH = 200
 
 # グローバル変数
@@ -28,11 +29,13 @@ class Plotter3d:
         self.theta = 3.1415/4
         self.phi = -3.1415/6
         axes = [
-            np.array([[-AXIS_LENGTH/2, -AXIS_LENGTH/2, 0],
-                     [AXIS_LENGTH/2, -AXIS_LENGTH/2, 0]], dtype=np.float32),
-            np.array([[-AXIS_LENGTH/2, -AXIS_LENGTH/2, 0],
-                     [-AXIS_LENGTH/2, AXIS_LENGTH/2, 0]], dtype=np.float32),
-            np.array([[-AXIS_LENGTH/2, -AXIS_LENGTH/2, 0], [-AXIS_LENGTH/2, -AXIS_LENGTH/2, AXIS_LENGTH]], dtype=np.float32)]
+                np.array([[-AXIS_LENGTH/2, -AXIS_LENGTH/2, 0],
+                        [AXIS_LENGTH/2, -AXIS_LENGTH/2, 0]], dtype=np.float32),
+                np.array([[-AXIS_LENGTH/2, -AXIS_LENGTH/2, 0],
+                        [-AXIS_LENGTH/2, AXIS_LENGTH/2, 0]], dtype=np.float32),
+                np.array([[-AXIS_LENGTH/2, -AXIS_LENGTH/2, 0],
+                        [-AXIS_LENGTH/2, -AXIS_LENGTH/2, AXIS_LENGTH]], dtype=np.float32)
+            ]
         step = 20
         for step_id in range(AXIS_LENGTH // step + 1):  # add grid
             axes.append(np.array([[-AXIS_LENGTH / 2, -AXIS_LENGTH / 2 + step_id * step, 0],

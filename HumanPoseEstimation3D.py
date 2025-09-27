@@ -1,16 +1,18 @@
 # Human Pose Estimation 3D demo from OpenCV
-import cv2
-import threading
-import json
-import numpy as np
-import yt_dlp
 import argparse
-import openvino as ov
-from engine3d.draw import Plotter3d
-from function.utils import VideoPlayer
-from engine3d.thread import MultiThread
+import json
+import threading
 
-# model settings 
+import cv2
+import numpy as np
+import openvino as ov
+import yt_dlp
+
+from engine3d.draw import Plotter3d
+from engine3d.thread import MultiThread
+from function.utils import VideoPlayer
+
+# model settings
 MODEL_PATH = "./model/intel/human-pose-estimation-3d-0001/FP32/human-pose-estimation-3d-0001.xml"
 MODEL_WEIGHTS_PATH = "./model/intel/human-pose-estimation-3d-0001/FP32/human-pose-estimation-3d-0001.bin"
 FILE_PATH = "./data/extrinsics.json"
@@ -59,7 +61,7 @@ def main(source, size, flip, skip_first_frames):
             break
 
         if threading.active_count() == 3:
-            th = MultiThread(frame, model, R, T, infer_request, input_tensor_name, 
+            th = MultiThread(frame, model, R, T, infer_request, input_tensor_name,
                              plotter, canvas_3d, canvas_3d_window_name, current_time)
 
             if first_time:
@@ -79,9 +81,21 @@ def main(source, size, flip, skip_first_frames):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--source', type=str, default="0", help="string. default: your webcam \n video path: local video \n video URL: youtube video")
-    parser.add_argument('--size', type=int, default=(720, 720) , help="Image size")
-    parser.add_argument('--flip', type=bool, default=False, help="bool. Flipped images")
-    parser.add_argument('--skip_first_frames', type=int, default=0, help="int. Skip frames when load video or video URL")
+    parser.add_argument('--source',
+                        type=str,
+                        default="0",
+                        help="string. default: your webcam \n video path: local video \n video URL: youtube video")
+    parser.add_argument('--size',
+                        type=int,
+                        default=(720, 720),
+                        help="Image size")
+    parser.add_argument('--flip',
+                        type=bool,
+                        default=False,
+                        help="bool. Flipped images")
+    parser.add_argument('--skip_first_frames',
+                        type=int,
+                        default=0,
+                        help="int. Skip frames when load video or video URL")
     args, unparsed = parser.parse_known_args()
     main(args.source, args.size, args.flip, args.skip_first_frames)

@@ -1,6 +1,8 @@
 import threading
 import time
+
 import cv2
+
 
 class VideoPlayer:
     def __init__(self, source, size=(760, 760), flip=False, skip_first_frames=0):

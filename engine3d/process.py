@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def rotate_poses(poses_3d, R, t):
     R_inv = np.linalg.inv(R)
     for pose_id in range(len(poses_3d)):
@@ -15,7 +16,7 @@ def submit_joint(poses_3d, before_poses_3d):
     # 初回フレームのみ有効
     if before_poses_3d is None:
         return danger_person_index
-    else: 
+    else:
         try:
             for x in range(len(poses_3d)):
                 if len(poses_3d) != len(before_poses_3d):

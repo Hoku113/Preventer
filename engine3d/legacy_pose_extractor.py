@@ -1,7 +1,8 @@
-import cv2
 import math
-import numpy as np
 from operator import itemgetter
+
+import cv2
+import numpy as np
 
 BODY_PARTS_KPT_IDS = [[1, 2], [1, 5], [2, 3], [3, 4], [5, 6], [6, 7], [1, 8], [8, 9], [9, 10], [1, 11],
                       [11, 12], [12, 13], [1, 0], [0, 14], [14, 16], [0, 15], [15, 17], [2, 16], [5, 17]]

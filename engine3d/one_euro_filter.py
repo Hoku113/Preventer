@@ -1,5 +1,6 @@
 import math
 
+
 def get_alpha(rate=30, cutoff=1):
     tau = 1 / (2 * math.pi * cutoff)
     te = 1 / rate
@@ -20,7 +21,7 @@ class OneEuroFilter:
         x_filtered = self._calc_low_pass_filter(x, get_alpha(self.freq, cutoff))
         self.x_previous = x
         return x_filtered
-    
+
     def _calc_low_pass_filter(self, x, alpha=0.5):
         if self.x_previous is None:
             self.x_previous = x
