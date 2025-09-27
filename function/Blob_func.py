@@ -1,5 +1,5 @@
 import io
-from azure.storage.blob import BlobServiceClient, ContentSettings
+from azure.storage.blob import BlobServiceClient
 from datetime import datetime
 from PIL import Image
 
