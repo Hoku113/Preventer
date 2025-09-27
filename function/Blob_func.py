@@ -1,6 +1,7 @@
 import io
-from azure.storage.blob import BlobServiceClient, ContentSettings
 from datetime import datetime
+
+from azure.storage.blob import BlobServiceClient
 from PIL import Image
 
 # # Azure Blob config

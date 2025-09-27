@@ -59,8 +59,12 @@ def propagate_ids(previous_poses, current_poses, threshold=3):
     :return: None
     """
     current_poses_sorted_ids = list(range(len(current_poses)))
+    # match confident poses first
     current_poses_sorted_ids = sorted(
-        current_poses_sorted_ids, key=lambda pose_id: current_poses[pose_id].confidence, reverse=True)  # match confident poses first
+        current_poses_sorted_ids,
+        key=lambda pose_id: current_poses[pose_id].confidence,
+        reverse=True
+        )
     mask = np.ones(len(previous_poses), dtype=np.int32)
     for current_pose_id in current_poses_sorted_ids:
         best_matched_id = None

@@ -221,7 +221,8 @@ class OpenPoseDecoder:
             if len(connections) == 0:
                 continue
 
-            pose_entries = self.update_poses(kpt_a_id, kpt_b_id, all_keypoints, connections, pose_entries, pose_entry_size)
+            pose_entries = self.update_poses(kpt_a_id, kpt_b_id, all_keypoints, connections,
+                                             pose_entries, pose_entry_size)
 
         pose_entries = np.asarray(pose_entries, dtype=np.float32).reshape(-1, pose_entry_size)
         pose_entries = pose_entries[pose_entries[:, -1] >= 3]

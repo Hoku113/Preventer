@@ -1,7 +1,7 @@
 import numpy as np
 
-from engine3d.pose import Pose, propagate_ids
 from engine3d.legacy_pose_extractor import extract_poses
+from engine3d.pose import Pose, propagate_ids
 
 # 定数定義
 AVG_PERSON_HEIGHT = 180
@@ -60,9 +60,12 @@ def get_root_relative_poses(inference_results):
                         for kpt_id_where in limb:
                             kpt_from_2d = poses_2d[pose_id][kpt_id_from*3: kpt_id_from*3 + 2].astype(int)
                             map_3d = features[kpt_id_where * 3:(kpt_id_where + 1) * 3]
-                            poses_3d[pose_id][kpt_id_where * 4] = map_3d[0, kpt_from_2d[1], kpt_from_2d[0]] * AVG_PERSON_HEIGHT
-                            poses_3d[pose_id][kpt_id_where * 4 + 1] = map_3d[1, kpt_from_2d[1], kpt_from_2d[0]] * AVG_PERSON_HEIGHT
-                            poses_3d[pose_id][kpt_id_where * 4 + 2] = map_3d[2, kpt_from_2d[1], kpt_from_2d[0]] * AVG_PERSON_HEIGHT
+                            poses_3d[pose_id][kpt_id_where * 4] = \
+                                map_3d[0, kpt_from_2d[1], kpt_from_2d[0]] * AVG_PERSON_HEIGHT
+                            poses_3d[pose_id][kpt_id_where * 4 + 1] = \
+                                map_3d[1, kpt_from_2d[1], kpt_from_2d[0]] * AVG_PERSON_HEIGHT
+                            poses_3d[pose_id][kpt_id_where * 4 + 2] = \
+                                map_3d[2, kpt_from_2d[1], kpt_from_2d[0]] * AVG_PERSON_HEIGHT
                         break
 
     return poses_3d, np.array(poses_2d), features.shape

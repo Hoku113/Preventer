@@ -1,0 +1,6 @@
+# ファイルパスを指定しているため120文字まで許容
+line-length = 120
+
+[lint]
+select = ["F", "E", "W", "I"]
+ignore = []
