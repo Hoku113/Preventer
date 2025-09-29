@@ -5,6 +5,8 @@ tqdm
 azure-storage-blob
 ipython
 
+# 静的解析用ライブラリ
+ruff
+
 # 任意(いろいろな動画でテストできるようにするために使用)
-pafy
 yt-dlp

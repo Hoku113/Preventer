@@ -1,7 +1,7 @@
+import math
 from operator import itemgetter
 
 import cv2
-import math
 import numpy as np
 
 BODY_PARTS_KPT_IDS = [[1, 2], [1, 5], [2, 3], [3, 4], [5, 6], [6, 7], [1, 8], [8, 9], [9, 10], [1, 11],
@@ -9,11 +9,9 @@ BODY_PARTS_KPT_IDS = [[1, 2], [1, 5], [2, 3], [3, 4], [5, 6], [6, 7], [1, 8], [8
 BODY_PARTS_PAF_IDS = ([12, 13], [20, 21], [14, 15], [16, 17], [22, 23], [24, 25], [0, 1], [2, 3], [4, 5],
                       [6, 7], [8, 9], [10, 11], [28, 29], [30, 31], [34, 35], [32, 33], [36, 37], [18, 19], [26, 27])
 
-
 def linspace2d(start, stop, n=10):
     points = 1 / (n - 1) * (stop - start)
     return points[:, None] * np.arange(n) + start[:, None]
-
 
 def extract_keypoints(heatmap, all_keypoints, total_keypoint_num):
     heatmap[heatmap < 0.1] = 0
@@ -23,7 +21,6 @@ def extract_keypoints(heatmap, all_keypoints, total_keypoint_num):
     heatmap_right = heatmap_with_borders[1:heatmap_with_borders.shape[0]-1, 0:heatmap_with_borders.shape[1]-2]
     heatmap_up = heatmap_with_borders[2:heatmap_with_borders.shape[0], 1:heatmap_with_borders.shape[1]-1]
     heatmap_down = heatmap_with_borders[0:heatmap_with_borders.shape[0]-2, 1:heatmap_with_borders.shape[1]-1]
-
     heatmap_peaks = (heatmap_center > heatmap_left) &\
                     (heatmap_center > heatmap_right) &\
                     (heatmap_center > heatmap_up) &\
@@ -48,7 +45,6 @@ def extract_keypoints(heatmap, all_keypoints, total_keypoint_num):
         keypoint_num += 1
     all_keypoints.append(keypoints_with_score_and_id)
     return keypoint_num
-
 
 def group_keypoints(all_keypoints_by_type, pafs, pose_entry_size=20, min_paf_score=0.05):
     pose_entries = []
@@ -198,7 +194,6 @@ def group_keypoints(all_keypoints_by_type, pafs, pose_entry_size=20, min_paf_sco
     pose_entries = np.asarray(filtered_entries)
     return pose_entries, all_keypoints
 
-
 def extract_poses(heatmaps, pafs, upsample_ratio):
     heatmaps = np.transpose(heatmaps, (1, 2, 0))
     pafs = np.transpose(pafs, (1, 2, 0))
@@ -212,7 +207,6 @@ def extract_poses(heatmaps, pafs, upsample_ratio):
     all_keypoints_by_type = []
     for kpt_idx in range(num_keypoints):
         total_keypoints_num += extract_keypoints(heatmaps[kpt_idx], all_keypoints_by_type, total_keypoints_num)
-    
     pose_entries, all_keypoints = group_keypoints(all_keypoints_by_type, pafs)
 
     found_poses = []
@@ -230,5 +224,4 @@ def extract_poses(heatmaps, pafs, upsample_ratio):
 
     if not found_poses:
         return np.array(found_poses, dtype=np.float32).reshape((0,0)), None
-
     return np.array(found_poses, dtype=np.float32), None
