@@ -2,9 +2,9 @@
 Preventing station platform from falling
 
 ## Version
-Current Version: **0.1.0-beta**
+Current Version: **0.1.1-beta**
 
-Released: **2025-09-22**
+Released: **2025-09-29**
 
 ## Environment
 - windows 10/11 Home/Pro
