@@ -40,7 +40,6 @@ class PoseEstimator:
         self._plotter = plotter
         self._canvas_3d = canvas_3d
         self._canvas3d_window_name = canvas3d_window_name
-        self._current_time = cv2.getTickCount()
         self._mean_time = 0
         self._fx = -1
 
