@@ -2,6 +2,7 @@
 import argparse
 import json
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 import cv2
 import numpy as np
@@ -63,7 +64,6 @@ def main(source, size, flip, skip_first_frames):
     pose_estimator = PoseEstimator(model, R, T, infer_request, input_tensor_name,
                                    plotter, canvas_3d, canvas_3d_window_name)
 
-    first_time = True
     while cv2.waitKey(1) != ESC_KEY:
         start_time = time.time()
         ret, frame = capture.read()
@@ -75,11 +75,9 @@ def main(source, size, flip, skip_first_frames):
         pose_estimator.preprocessed(frame, size, flip, interpolation)
 
         # 3D姿勢推定
-        if first_time:
-            frame, before_3d_frame = pose_estimator.predict()
-            first_time = False
-        else:
-            frame, before_3d_frame = pose_estimator.predict(before_3d_frame)
+        with ThreadPoolExecutor() as executor:
+            executor.submit(pose_estimator.run)
+            frame = pose_estimator.get_frame()
 
         # FPS計算
         end_time = time.time()
