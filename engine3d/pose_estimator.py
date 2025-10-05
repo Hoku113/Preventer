@@ -40,9 +40,7 @@ class PoseEstimator():
         self._plotter = plotter
         self._canvas_3d = canvas_3d
         self._canvas3d_window_name = canvas3d_window_name
-        self._mean_time = 0
         self._fx = -1
-        self.first_time = True
         self._before_3d_frame = None
 
     def get_frame(self):
