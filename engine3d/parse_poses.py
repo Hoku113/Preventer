@@ -1,7 +1,7 @@
 import numpy as np
 
 from engine3d.legacy_pose_extractor import extract_poses
-from engine3d.pose import Pose, propagate_ids
+from engine3d.pose import Pose
 
 # 定数定義
 AVG_PERSON_HEIGHT = 180
@@ -14,15 +14,19 @@ LIMBS = [[18, 17, 1],
          [14, 13, 12]]
 KEYPOINT_TRESHOLD = 0.1
 NUM_KPTS = 18
+UNSAMPLE_RATIO = 4
+SIGMAS = np.array([.79, .26, .79, .72, .62, 1.07, .87, .89, .79, .72, .62, 1.07, .87, .89, .25, .25, .35, .35],
+                    dtype=np.float32) / 10.0
+VARS = (SIGMAS * 2) ** 2
 
-def get_root_relative_poses(inference_results):
+
+
+def _get_root_relative_poses(inference_results):
     features, heatmap, paf_map = inference_results
-
-    upsample_ratio = 4
-    found_poses = extract_poses(heatmap[0:-1], paf_map, upsample_ratio)[0]
+    found_poses = extract_poses(heatmap[0:-1], paf_map, UNSAMPLE_RATIO)[0]
     # scale coordinates to features space
-    found_poses[:, 0:-1:3] /= upsample_ratio
-    found_poses[:, 1:-1:3] /= upsample_ratio
+    found_poses[:, 0:-1:3] /= UNSAMPLE_RATIO
+    found_poses[:, 1:-1:3] /= UNSAMPLE_RATIO
 
     poses_2d = []
     num_kpt_panoptic = 19
@@ -70,9 +74,10 @@ def get_root_relative_poses(inference_results):
 
     return poses_3d, np.array(poses_2d), features.shape
 
+# 姿勢の解析
 def parse_poses(inference_results, input_scale, stride, fx, is_video=False):
+    poses_3d, poses_2d, features_shape = _get_root_relative_poses(inference_results)
     previous_poses_2d = []
-    poses_3d, poses_2d, features_shape = get_root_relative_poses(inference_results)
     poses_2d_scaled = []
     for pose_2d in poses_2d:
         num_kpt = (pose_2d.shape[0] - 1) // 3
@@ -95,9 +100,8 @@ def parse_poses(inference_results, input_scale, stride, fx, is_video=False):
                     pose_keypoints[kpt_id, 1] = int(poses_2d_scaled[pose_id][kpt_id * 3 + 1])
             pose = Pose(pose_keypoints, poses_2d_scaled[pose_id][-1])
             current_poses_2d.append(pose)
-        propagate_ids(previous_poses_2d, current_poses_2d)
+        _propagate_ids(previous_poses_2d, current_poses_2d)
         previous_poses_2d = current_poses_2d
-
     translated_poses_3d = []
     # translate poses
     for pose_id in range(len(poses_3d)):
@@ -136,3 +140,50 @@ def parse_poses(inference_results, input_scale, stride, fx, is_video=False):
         translated_poses_3d.append(pose_3d.transpose().reshape(-1))
 
     return np.array(translated_poses_3d), np.array(poses_2d_scaled)
+
+def _get_similarity(current_poses, previous_poses, threshold=0.5):
+    num_similar_kpt = 0
+    for kpt_id in range(NUM_KPTS):
+        if current_poses.keypoints[kpt_id, 0] != -1 and previous_poses.keypoints[kpt_id, 0] != -1:
+            distance = np.sum((current_poses.keypoints[kpt_id] - previous_poses.keypoints[kpt_id]) ** 2)
+            area = max(current_poses.bbox[2] * current_poses.bbox[3], previous_poses.bbox[2] * previous_poses.bbox[3])
+            similarity = np.exp(-distance / (2 * (area + np.spacing(1)) * VARS[kpt_id]))
+            if similarity > threshold:
+                num_similar_kpt += 1
+    return num_similar_kpt
+
+def _propagate_ids(current_poses, previous_poses, threshold=3):
+    """Propagate poses ids from previous frame results. Id is propagated,
+    if there are at least `threshold` similar keypoints between pose from previous frame and current.
+    :param previous_poses: poses from previous frame with ids
+    :param current_poses: poses from current frame to assign ids
+    :param threshold: minimal number of similar keypoints between poses
+    :return: None
+    """
+    current_poses_sorted_ids = list(range(len(current_poses)))
+    # match confident poses first
+    current_poses_sorted_ids = sorted(
+        current_poses_sorted_ids,
+        key=lambda pose_id: current_poses[pose_id].confidence,
+        reverse=True
+        )
+    mask = np.ones(len(previous_poses), dtype=np.int32)
+    for current_pose_id in current_poses_sorted_ids:
+        best_matched_id = None
+        best_matched_pose_id = None
+        best_matched_iou = 0
+        for previous_pose_id in range(len(previous_poses)): # 前フレームで検出した姿勢分処理する
+            if not mask[previous_pose_id]:
+                continue
+            iou = _get_similarity(current_poses[current_pose_id], previous_poses[previous_pose_id])
+            if iou > best_matched_iou:
+                best_matched_iou = iou
+                best_matched_pose_id = previous_poses[previous_pose_id].id
+                best_matched_id = previous_pose_id
+        if best_matched_iou >= threshold:
+            mask[best_matched_id] = 0
+        else:  # pose not similar to any previous
+            best_matched_pose_id = None
+        current_poses[current_pose_id].update_id(best_matched_pose_id)
+        if best_matched_pose_id is not None:
+            current_poses[current_pose_id].translation_filter = previous_poses[best_matched_id].translation_filter

@@ -6,15 +6,6 @@ import numpy as np
 # 定数定義
 SCALE_DX = 450
 SCALE_DY = 337
-BODY_EDGES = np.array(
-    [[0, 1],  # neck - nose
-     [1, 16], [16, 18],  # nose - l_eye - l_ear
-     [1, 15], [15, 17],  # nose - r_eye - r_ear
-     [0, 3], [3, 4], [4, 5],     # neck - l_shoulder - l_elbow - l_wrist
-     [0, 9], [9, 10], [10, 11],  # neck - r_shoulder - r_elbow - r_wrist
-     [0, 6], [6, 7], [7, 8],        # neck - l_hip - l_knee - l_ankle
-     [0, 12], [12, 13], [13, 14]]   # neck - r_hip - r_knee - r_ankle
-     )
 AXIS_LENGTH = 200
 
 # グローバル変数
@@ -89,63 +80,4 @@ class Plotter3d:
         if event == cv2.EVENT_LBUTTONUP:
             should_rotate = False
 
-def draw_poses(frame, poses_2d, scaled_img):
-    for pose in poses_2d:
-        pose = np.array(pose[0:-1]).reshape((-1, 3)).transpose()
-        was_found = pose[2] > 0
-        pose[0], pose[1] = (
-            # 正確にジョイントをプロットするために座標の位置を調整する
-            pose[0] * frame.shape[1] / scaled_img.shape[1],
-            pose[1] * frame.shape[0] / scaled_img.shape[0]
-        )
 
-        for edge in BODY_EDGES:
-            if was_found[edge[0]] and was_found[edge[1]]:
-                cv2.line(frame, tuple(pose[0:2, edge[0]].astype(np.int32)),
-                         tuple(pose[0:2, edge[1]].astype(np.int32)),
-                         (255, 255, 0),
-                         4,
-                         cv2.LINE_AA)
-
-        for kpt_id in range(pose.shape[1]):
-            if pose[2, kpt_id] != -1:
-                cv2.circle(
-                    frame,
-                    tuple(pose[0:2, kpt_id].astype(np.int32)),
-                    3,
-                    (0, 255, 255),
-                    -1,
-                    cv2.LINE_AA,
-                )
-
-def draw_dangerous_person(frame, poses_2d, scaled_img, danger_person_index):
-    for index in danger_person_index:
-        pose = np.array(poses_2d[index][0: -1]).reshape((-1, 3)).transpose()
-        pose[0], pose[1] = (
-            pose[0] * frame.shape[1] / scaled_img.shape[1],
-            pose[1] * frame.shape[0] / scaled_img.shape[0]
-        )
-
-        max_pose_x = int(pose[0][pose[0] > -1.4].max())
-        max_pose_y = int(pose[1][pose[1] > -1.4].max())
-        min_pose_x = int(pose[0][pose[0] > -1.4].min())
-        min_pose_y = int(pose[1][pose[1] > -1.4].min())
-
-        cv2.rectangle(
-            frame,
-            (min_pose_x - 30, min_pose_y - 30),
-            (max_pose_x + 30, max_pose_y + 30),
-            (0, 0, 255),
-            3,
-            cv2.LINE_4
-        )
-
-        cv2.putText(
-            frame,
-            f"person{index + 1}",
-            (min_pose_x - 40, min_pose_y - 40),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.9,
-            (36, 255, 12),
-            2
-        )
