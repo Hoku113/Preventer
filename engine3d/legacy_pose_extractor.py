@@ -9,11 +9,11 @@ BODY_PARTS_KPT_IDS = [[1, 2], [1, 5], [2, 3], [3, 4], [5, 6], [6, 7], [1, 8], [8
 BODY_PARTS_PAF_IDS = ([12, 13], [20, 21], [14, 15], [16, 17], [22, 23], [24, 25], [0, 1], [2, 3], [4, 5],
                       [6, 7], [8, 9], [10, 11], [28, 29], [30, 31], [34, 35], [32, 33], [36, 37], [18, 19], [26, 27])
 
-def linspace2d(start, stop, n=10):
+def _linespace2d(start, stop, n=10):
     points = 1 / (n - 1) * (stop - start)
     return points[:, None] * np.arange(n) + start[:, None]
 
-def extract_keypoints(heatmap, all_keypoints, total_keypoint_num):
+def _extract_keypoints(heatmap, all_keypoints, total_keypoint_num):
     heatmap[heatmap < 0.1] = 0
     heatmap_with_borders = np.pad(heatmap, [(2, 2), (2, 2)], mode='constant')
     heatmap_center = heatmap_with_borders[1:heatmap_with_borders.shape[0]-1, 1:heatmap_with_borders.shape[1]-1]
@@ -46,7 +46,7 @@ def extract_keypoints(heatmap, all_keypoints, total_keypoint_num):
     all_keypoints.append(keypoints_with_score_and_id)
     return keypoint_num
 
-def group_keypoints(all_keypoints_by_type, pafs, pose_entry_size=20, min_paf_score=0.05):
+def _group_keypoints(all_keypoints_by_type, pafs, pose_entry_size=20, min_paf_score=0.05):
     pose_entries = []
     all_keypoints = np.array([item for sublist in all_keypoints_by_type for item in sublist])
     for part_id in range(len(BODY_PARTS_PAF_IDS)):
@@ -115,7 +115,7 @@ def group_keypoints(all_keypoints_by_type, pafs, pose_entry_size=20, min_paf_sco
                 if cur_point_score > -100:
                     passed_point_score = 0
                     passed_point_num = 0
-                    x, y = linspace2d(kpt_a, kpt_b)
+                    x, y = _linespace2d(kpt_a, kpt_b)
                     for point_idx in range(point_num):
                         px = int(x[point_idx])
                         py = int(y[point_idx])
@@ -206,8 +206,8 @@ def extract_poses(heatmaps, pafs, upsample_ratio):
     total_keypoints_num = 0
     all_keypoints_by_type = []
     for kpt_idx in range(num_keypoints):
-        total_keypoints_num += extract_keypoints(heatmaps[kpt_idx], all_keypoints_by_type, total_keypoints_num)
-    pose_entries, all_keypoints = group_keypoints(all_keypoints_by_type, pafs)
+        total_keypoints_num += _extract_keypoints(heatmaps[kpt_idx], all_keypoints_by_type, total_keypoints_num)
+    pose_entries, all_keypoints = _group_keypoints(all_keypoints_by_type, pafs)
 
     found_poses = []
     for pose_entry in pose_entries:
